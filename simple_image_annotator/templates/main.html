@@ -37,7 +37,10 @@
                             <input id= "{{ label.id }}" onkeydown="if (event.keyCode == 13) { label(this.id, this.value); }" type="text" class="form-control" placeholder="label name" autofocus></input>
                         {% endif %}
                         <span class="input-group-btn">
-                            <button id= "{{ label.id }}" class="btn btn-danger" onclick="window.location.replace('/remove/' + this.id)" type="button">-</button> if (event.keyCode == 13) { label(this.id, this.value); }
+                            <button id= "{{ label.id }}" class="btn btn-danger" onclick="window.location.replace('/remove/' + this.id)" type="button">-</button>
+                        </span>
+                        <span class="input-group-btn">
+                          <button class="btn btn-success" onclick="speechRecog({{ label.id }})" type="button">S</button>
                         </span>
                     </div>
                 </div>
@@ -103,7 +106,7 @@
       var clicked = false;
       var fPoint = {};
       c.onclick = function(e) {
-        console.log(clicked);
+        console.log('clicked', clicked);
         if (!clicked) {
             var x = (image.width / c.scrollWidth) * e.offsetX;
             var y = (image.height / c.scrollHeight) * e.offsetY;
@@ -147,15 +150,29 @@
         }
         clicked = !clicked;
       };
+    </script>
+    
+    <script>
 
-      // document.onkeydown = function(e) {
-      //   if ("key" in e) {
-      //     if(e.key == "Escape" || e.key == "Esc") {
-      //       clicked = false;
-      //       fPoint = {};
-      //     }
-      //   }
-      // };
+      function result_callback(ele){
+        return function(event){
+          // console.log('set ', event, ' on ', ele);
+          var text = event.results[0][0].transcript;
+          console.log(text);
+          ele.value = text;
+        }
+      }
+      function speechRecog(ele){
+        var ele = document.getElementById(ele);
+
+        var speech = new webkitSpeechRecognition();
+        speech.continuous = false;
+        speech.lang = 'en-US';
+        speech.onresult = result_callback(ele);
+
+        speech.start();
+
+      }
     </script>
 </div>
 </body>
