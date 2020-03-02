@@ -40,8 +40,8 @@
                             <button id= "{{ label.id }}" class="btn btn-danger" onclick="window.location.replace('/remove/' + this.id)" type="button">-</button>
                         </span>
                         <span class="input-group-btn">
-                        <button id= "{{ label.id }}_speech" class="btn btn-success" onclick="speechRecog({{ label.id }})" type="button">S</button>
-                      </span>
+                          <button class="btn btn-success" onclick="speechRecog({{ label.id }})" type="button">S</button>
+                        </span>
                     </div>
                 </div>
                 {% endfor %}
@@ -153,10 +153,25 @@
     </script>
     
     <script>
+
+      function result_callback(ele){
+        return function(event){
+          // console.log('set ', event, ' on ', ele);
+          var text = event.results[0][0].transcript;
+          console.log(text);
+          ele.value = text;
+        }
+      }
       function speechRecog(ele){
         var ele = document.getElementById(ele);
-        console.log('speech recog called on ', ele);
-        ele.value = 'hello\n';
+
+        var speech = new webkitSpeechRecognition();
+        speech.continuous = false;
+        speech.lang = 'en-US';
+        speech.onresult = result_callback(ele);
+
+        speech.start();
+
       }
     </script>
 </div>
